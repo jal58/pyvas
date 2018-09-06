@@ -2,10 +2,7 @@
 
 ## Preliminaries
 
-1. Ensure that you can communicate with your instance of OpenVAS using 
-the omp command line utility. 
-
-2. Ensure that you have the **omp** command line utility installed, and
+1. Ensure that you have the **omp** command line utility installed, and
 that you can connect to OpenVAS
 
 If you haven't already done so, you can create a file 
@@ -39,10 +36,10 @@ OMP ping failed: Failed to establish connection.
 Once you have determined the correct settings, please make a note of 
 them as you will need them later.
 
-3. Set up a virtual environment by installing `virtualenv` with your 
+2. Set up a virtual environment by installing `virtualenv` with your 
 distribution's package manager (e.g. `apt-get` or `yum`), or using `pip3`
 
-4. Create a `virtualenvironment` or `venv` (directory in the base of 
+3. Create a `virtualenvironment` or `venv` (directory in the base of 
 your pyvas directory), then create a virtual environment with the 
 command:
 
@@ -59,7 +56,7 @@ for example:
 virtualenvironment/
 ```
 
-5. Add the variables for connecting to OpenVAS to your virtual 
+4. Add the variables for connecting to OpenVAS to your virtual 
 environment based on the values you determined in step 2 above:
 
 ```
@@ -71,7 +68,7 @@ export OPENVASMD_PORT=9390
 EOF
 ```
 
-6. Activate your virtual environment:
+5. Activate your virtual environment:
 
 ```
 cd /path/to/pyvas
@@ -79,7 +76,7 @@ source virtualenvironment/bin/activate
 
 ```
 
-7. Ensure that the following python packages are installed within your
+6. Ensure that the following python packages are installed within your
 virtual environment with pip3
   * pytest-cov
   * pytest-mock
