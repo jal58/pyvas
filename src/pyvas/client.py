@@ -208,7 +208,7 @@ class Client(object):
             config = self.get_config(uuid, details=True)
             nvts = []
             for n in config['nvt_selectors']['nvt_selector']:
-                if n['type'] is '2':
+                if n['type'] == '2':
                     nvts += [n['family_or_nvt']]
             if families == True:
                 nvt_map = self.map_nvts()
@@ -331,7 +331,7 @@ class Client(object):
                 if n["oid"] in all_my_nvts:
                     oid_to_fam[n["oid"]] = f
         family = oid_to_fam[nvt]
-        assert family is not '', \
+        assert family != '', \
             "couldn't determine the family of NVT {}".format(nvt)
             
         # make a list of the remaining NVTs in the unwanted NVT's family
