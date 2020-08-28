@@ -32,10 +32,13 @@ print("HOST = {}".format(HOST))
 print("=============\n")
 
 
-slow = pytest.mark.skipif(
-    not pytest.config.getoption("--slow"),
-    reason="need --slow option to run"
-)
+#slow = pytest.mark.skipif(
+#    not pytest.config.getoption("--slow"),
+#    reason="need --slow option to run"
+#)
+def pytest_addoption(parser):
+    parser.addoption("--runslow", action="store_true",
+        help="run slow tests")
 
 
 @pytest.fixture(scope="module")
@@ -184,14 +187,14 @@ class TestPortLists(object):
         assert response.ok
         assert isinstance(response.data, list)
 
-    @slow
+    @pytest.mark.slow
     def test_get_port_list(self, client, port_list):
         response = client.get_port_list(uuid=port_list["@id"])
         assert response.ok
         assert port_list["name"] == response["name"]
         assert port_list["@id"] == response["@id"]
 
-    @slow
+    @pytest.mark.slow
     def test_delete_port_list(self, client, port_list):
         response = client.delete_port_list(uuid=port_list["@id"])
         assert response.ok
@@ -244,6 +247,7 @@ class TestConfigs(object):
         response = client.create_config(name=NAME, copy_uuid=config["@id"])
         assert response.ok
 
+    @pytest.mark.slow
     def test_copy_config_by_name(self, client, config):
         new_config = "{}-{}".format(config["name"],os.getpid())
         response = client.copy_config_by_name(config["name"], new_config)
@@ -276,25 +280,25 @@ class TestConfigs(object):
         response = client.get_config_by_name(config["name"])
         assert response.get("name") == config["name"]
     
-    @slow        
+    @pytest.mark.slow        
     def test_list_config_families(self, client, config):
         response = client.list_config_families(config["@id"])
         assert isinstance(response, list)
     
-    @slow
+    @pytest.mark.slow
     def test_delete_config(self, client, config):
         empty = client.create_config(name="delete me",
                                      copy_uuid=config["@id"])
         response = client.delete_config(uuid=empty["@id"])
         assert response["@status"] == "200"
 
-    @slow
+    @pytest.mark.slow
     def test_map_config_names(self, client):
         dictionary = client.map_config_names()
         assert isinstance(dictionary, dict)
         
     #@pytest.mark.parametrize('original', ['Full and fast'])    
-    #@slow
+    #@pytest.mark.slow
     #def test_copy_config_with_blacklist_by_name(self, client, original):
         #"""
         #Test removing a random group of NVTs from a config
@@ -323,7 +327,7 @@ class TestConfigs(object):
 
     
     @pytest.mark.parametrize('conf', ['Full and fast', 'empty'])
-    @slow
+    @pytest.mark.slow
     def test_list_config_nvts(self, client, conf):
         uuid = client.map_config_names()[conf]
         without_families = client.list_config_nvts(uuid)
@@ -431,7 +435,7 @@ class TestTasks(object):
         response = client.stop_task(uuid=task["@id"])
         assert response.ok
 
-    @slow
+    @pytest.mark.slow
     def test_resume_task(self, client, task):
         while True:
             response = client.get_task(uuid=task["@id"])
@@ -453,24 +457,24 @@ class TestTasks(object):
 
 class TestReports(object):
 
-    @slow
+    @pytest.mark.slow
     def test_list_reports(self, client):
         response = client.list_reports(task=NAME, owner=USERNAME)
         assert response.ok
         assert isinstance(response.data, list)
 
-    @slow
+    @pytest.mark.slow
     def test_get_report(self, client, report):
         response = client.get_report(uuid=report["@id"])
         assert response.ok and response.status_code == 200
 
-    @slow
+    @pytest.mark.slow
     def test_download_report_with_xml_format(self, client, report):
         response = client.download_report(uuid=report["@id"])
         assert etree.iselement(response)
         assert response.attrib["id"] == report["@id"]
 
-    @slow
+    @pytest.mark.slow
     def test_download_report_with_html_format(self, client, report):
         r_format = client.list_report_formats(name="HTML").data[0]
         response = client.download_report(uuid=report["@id"],
@@ -481,7 +485,7 @@ class TestReports(object):
         parser.close()
         assert parser
         
-    #@slow
+    #@pytest.mark.slow
     #def test_map_tasks_to_reports(self):
         #result = client.map_tasks_to_reports()
         #assert isinstance(result, dict)
@@ -489,19 +493,19 @@ class TestReports(object):
         
 class TestResults(object):
 
-    @slow
+    @pytest.mark.slow
     def test_list_results(self, client):
         response = client.list_results(task=NAME, owner=USERNAME)
         assert response.ok
         assert isinstance(response.data, list)
 
-    #@slow
+    #@pytest.mark.slow
     #def test_get_result(self, client, result):
         #result = client.list_results(task=NAME, owner=USERNAME)
         #response = client.get_result(uuid=result["@id"], details=True)
         #assert response.ok and response.status_code == 200
 
-    #@slow
+    #@pytest.mark.slow
     #def test_map_tasks_to_results(self):
         #result = client.map_tasks_to_results()
         #assert isinstance(result, dict)
